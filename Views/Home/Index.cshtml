@@ -1,0 +1,414 @@
+﻿@model TaskTrackerDemo.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid px-4">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h4 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview
+            </h4>
+            <a asp-action="CreateProject" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus me-2"></i>New Project
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Summary Cards -->
+            <div class="row">
+                <!-- Active Projects -->
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2 clickable-card" 
+                         data-type="activeProjects" data-type="activeProjects">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Active Projects
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.UserProjects.Count
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-folder-open fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Completed Projects -->
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2 clickable-card" 
+                         data-type="completedProjects" data-type="completedProjects">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Completed Projects
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.CompletedProjects.Count
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Tasks -->
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2 clickable-card" 
+                         data-type="activeTasks" data-type="activeTasks">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Active Tasks
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.UserActiveTasks.Count
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Completed Tasks -->
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2 clickable-card" 
+                         data-type="completedTasks" data-type="completedTasks">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Completed Tasks
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.UserCompletedTasks.Count
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Active Tasks -->
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="card border-left-danger shadow h-100 py-2 clickable-card" 
+                         data-type="teamActiveTasks" data-type="teamActiveTasks">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                        Team Active Tasks
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.TeamActiveTasks.Count
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Completed Tasks -->
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="card border-left-secondary shadow h-100 py-2 clickable-card" 
+                         data-type="teamCompletedTasks" data-type="teamCompletedTasks">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                        Team Completed Tasks
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @Model.TeamCompletedTasks.Count
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-user-friends fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="card shadow mb-4" id="dataTableContainer">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-table me-2"></i>
+                        <span id="tableTitle">Active Tasks</span>
+                    </h6>
+                    <div id="tableControls">
+                        <button class="btn btn-sm btn-outline-secondary" id="exportExcel">
+                            <i class="fas fa-file-excel"></i> Export
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle text-nowrap" id="dataTable" width="100%">
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .clickable-card {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .clickable-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+
+        const tableTemplates = {
+            activeTasks: {
+                title: "Active Tasks",
+                headers: ['#', 'Project', 'Project Owner', 'Task', 'Status', 'Due Date'],
+                renderRow: (task, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${task?.project?.name || 'N/A'}</td>
+                        <td>${task.project?.createdBy || 'N/A'}</td>
+                        <td>${task.title}</td>
+                        <td><span class="badge bg-${getStatusColor(task.status)}">${task.status}</span></td>
+                        <td>${new Date(task.dueDate).toLocaleDateString('en-GB')}</td>
+                    </tr>`,
+                order: [[5, 'asc']]
+            },
+            completedTasks: {
+                title: "Completed Tasks",
+                headers: ['#', 'Project', 'Project Owner', 'Task', 'Start Date', 'End Date', 'Status'],
+                renderRow: (task, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${task?.project?.name || 'N/A'}</td>
+                        <td>${task.project?.createdBy || 'N/A'}</td>
+                        <td>${task.title}</td>
+                        <td>${new Date(task.startDate).toLocaleDateString('en-GB')}</td>
+                        <td>${new Date(task.endDate).toLocaleDateString('en-GB')}</td>
+                        <td><span class="badge bg-${task.endDate <= task.dueDate ? 'success' : 'danger'}">
+                            ${task.endDate <= task.dueDate ? 'On Time' : 'Delayed'}
+                        </span></td>
+                    </tr>`,
+                order: [[6, 'desc']]
+            },
+            activeProjects: {
+                title: "Active Projects",
+                headers: ['#', 'Project', 'Owner', 'Tasks', 'Start Date', 'Due Date'],
+                renderRow: (project, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${project.name}</td>
+                        <td>${project.createdBy}</td>
+                        <td>${project.taskCount}
+                        <td>${new Date(project.startDate).toLocaleDateString('en-GB')}</td>
+                        <td>${new Date(project.dueDate).toLocaleDateString('en-GB')}</td>
+                    </tr>`,
+                order: [[5, 'asc']]
+            },
+            completedProjects: {
+                title: "Completed Projects",
+                headers: ['#', 'Project', 'Owner', 'Tasks', 'Start Date', 'End Date', 'Status'],
+                renderRow: (project, index) => {
+                    const completionDate = project.completionDate ? new Date(project.completionDate) : null;
+                    const dueDate = new Date(project.dueDate);
+                    return `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${project.name}</td>
+                        <td>${project.createdBy}</td>
+                        <td>${project.taskCount}</td>
+                        <td>${new Date(project.startDate).toLocaleDateString('en-GB')}</td>
+                        <td>${completionDate ? completionDate.toLocaleDateString('en-GB') : '—'}</td>
+                        <td><span class="badge bg-${completionDate && completionDate <= dueDate ? 'success' : 'danger'}">
+                            ${completionDate && completionDate <= dueDate ? 'On Time' : 'Overdue'}
+                        </span></td>
+                    </tr>`;
+                },
+                order: [[6, 'desc']]
+            },
+            teamActiveTasks: {
+                title: "Team Active Tasks",
+                headers: ['#', 'Project', 'Owner', 'Task', 'Task Owner', 'Status', 'Due Date'],
+                renderRow: (task, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${task?.project?.name || 'N/A'}</td>
+                        <td>${task.project?.createdBy || 'N/A'}</td>
+                        <td>${task.title}</td>
+                        <td>${task.assignedUserName}</td>
+                        <td><span class="badge bg-${getStatusColor(task.status)}">${task.status}</span></td>
+                        <td>${new Date(task.dueDate).toLocaleDateString('en-GB')}</td>
+                    </tr>`,
+                order: [[6, 'asc']]
+            },
+            teamCompletedTasks: {
+                title: "Team Completed Tasks",
+                headers: ['#', 'Project', 'Owner', 'Task', 'Task Owner', 'Start Date', 'End Date', 'Status'],
+                renderRow: (task, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${task?.project?.name || 'N/A'}</td>
+                        <td>${task.project?.createdBy || 'N/A'}</td>
+                        <td>${task.title}</td>
+                        <td>${task.assignedUserName}</td>
+                        <td>${new Date(task.startDate).toLocaleDateString('en-GB')}</td>
+                        <td>${new Date(task.endDate).toLocaleDateString('en-GB')}</td>
+                        <td><span class="badge bg-${task.endDate <= task.dueDate ? 'success' : 'danger'}">
+                            ${task.endDate <= task.dueDate ? 'On Time' : 'Delayed'}
+                        </span></td>
+                    </tr>`,
+                order: [[7, 'desc']]
+            }
+        };
+
+        const dataMap = {
+            activeTasks: @Html.Raw(Json.Serialize(Model.UserActiveTasks ?? new List<ProjectTask>())),
+            completedTasks: @Html.Raw(Json.Serialize(Model.UserCompletedTasks ?? new List<ProjectTask>())),
+            activeProjects: @Html.Raw(Json.Serialize(Model.UserProjects ?? new List<Project>())),
+            completedProjects: @Html.Raw(Json.Serialize(Model.CompletedProjects ?? new List<Project>())),
+            teamActiveTasks: @Html.Raw(Json.Serialize(Model.TeamActiveTasks ?? new List<ProjectTask>())),
+            teamCompletedTasks: @Html.Raw(Json.Serialize(Model.TeamCompletedTasks ?? new List<ProjectTask>()))
+        };
+
+        // Initialize with active tasks
+        $(document).ready(() => {
+            loadData('activeTasks');
+    
+            $(document).on('click', '.clickable-card', function() {
+                const dataType = $(this).data('type');
+                loadData(dataType);
+            });
+        });
+
+        function loadData(dataType) {
+            const template = tableTemplates[dataType];
+            const rawData = dataMap[dataType];
+            // Ensure data is always an array
+            const tableData = (rawData && rawData.$values) || [];
+            console.log(`Processing ${dataType} data:`, tableData); // Debug log
+            
+            /// Clear existing table
+            const $table = $('#dataTable');
+            $table.DataTable()?.destroy();
+            $table.empty();
+
+            // Add headers
+            const $header = $('<thead>').append($('<tr>'));
+            template.headers.forEach(header => {
+                $header.find('tr').append($('<th>').text(header));
+            });
+            
+            // Add rows only if data exists
+            const $body = $('<tbody>');
+            if (tableData.length > 0) {
+                tableData.forEach((item, index) => {
+                    console.log(`Processing item ${index}:`, item); // Debug log
+                    $body.append($(template.renderRow(item, index)));
+                });
+            } else {
+                $body.append(`
+                    <tr>
+                        <td colspan="${template.headers.length}" class="text-center">
+                            No data available in table
+                        </td>
+                    </tr>
+                `);
+            }
+
+            // Rebuild table
+            $table.append($header).append($body);
+
+
+            // Initialize DataTable
+            $table.DataTable({
+                dom: 'frtip',
+                order: template.order,
+                language: {
+                    paginate: {
+                        previous: '<i class="fas fa-chevron-left"></i>',
+                        next: '<i class="fas fa-chevron-right"></i>'
+                    }
+                }
+            });
+
+            // Export Button For excel file
+            $('#exportExcel').on('click', function () {
+                // Trigger Excel button
+                const btn = dataTable.button().add(0, {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':visible' // export only visible columns
+                    }
+                });
+                dataTable.button(0).trigger();
+                dataTable.buttons(0).remove();
+            });
+                    
+            // Update title
+            $('#tableTitle').text(template.title);
+            $('#tableControls').removeClass('d-none');
+
+            return dataTable;
+        }
+
+        function getStatusColor(status) {
+            const statusMap = {
+                'completed': 'success',
+                'in progress': 'warning',
+                'overdue': 'danger',
+                'not started': 'secondary'
+            };
+            return statusMap[status.toLowerCase()] || 'secondary';
+        }
+
+        
+    </script>
+}
+
+@functions {
+    int GetCompletionPercentage(Project project) {
+        if (project.Tasks.Count == 0) return 0;
+        var completed = project.Tasks.Count(t => t.Status == "Completed");
+        return (int)((completed / (double)project.Tasks.Count) * 100);
+    }
+    
+    string GetStatusColor(string status) {
+        return status?.ToLower() switch {
+            "completed" => "success",
+            "in progress" => "warning",
+            "overdue" => "danger",
+            _ => "secondary"
+        };
+    }
+}

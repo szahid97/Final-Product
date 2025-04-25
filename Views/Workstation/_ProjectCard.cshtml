@@ -1,0 +1,48 @@
+@model Project
+
+<div class="col-xl-3 col-lg-4 col-md-6">
+    <div class="card h-100 border-0 shadow-sm hover-effect">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+            <h6 class="m-0 text-truncate">@Model.Name</h6>
+        </div>
+
+        <div class="card-body">
+            <div class="mb-3">
+                <div class="d-flex justify-content-between small mb-1">
+                    <span>Progress</span>
+                    <span class="fw-bold">@GetCompletionPercentage(Model)%</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success" style="width: @GetCompletionPercentage(Model)%" role="progressbar"></div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between small mb-2">
+                <span class="text-muted">Tasks:</span>
+                <span class="fw-bold">@Model.TaskCount</span>
+            </div>
+            <div class="d-flex justify-content-between small mb-2">
+                <span class="text-muted">Created By:</span>
+                <span class="fw-bold text-truncate" style="max-width: 120px;">@Model.CreatedBy</span>
+            </div>
+            <div class="d-flex justify-content-between small">
+                <span class="text-muted">Due Date:</span>
+                <span class="fw-bold">@Model.DueDate.ToString("dd MMM yyyy")</span>
+            </div>
+        </div>
+
+        <div class="card-footer bg-transparent border-0 pt-0">
+            <a href="@Url.Action("ProjectDetails", "ProjectDetails", new { id = Model.Id })" class="btn btn-outline-primary btn-sm w-100 py-2">
+                <i class="fas fa-arrow-right me-2"></i>View Project
+            </a>
+        </div>
+    </div>
+</div>
+
+@functions {
+    int GetCompletionPercentage(Project project)
+    {
+        if (project.TaskCount == 0) return 0;
+        var completed = project.Tasks.Count(t => t.Status == "Completed");
+        return (int)((completed / (double)project.TaskCount) * 100);
+    }
+}

@@ -1,0 +1,223 @@
+@model TaskTrackerDemo.Models.MyTeamViewModel
+@{
+    ViewData["Title"] = "My Team";
+}
+
+<div class="container-fluid px-4">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h4 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-users-cog me-2"></i>Manage My Team
+            </h4>
+        </div>
+
+        <div class="card-body">
+            <form method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+                    <!-- Available Users -->
+                    <div class="col-md-5">
+                        <h5 class="text-primary">Available Users</h5>
+                        <input type="text" class="form-control mb-2" id="searchAvailable" placeholder="Search available users..." />
+                        <div class="border p-3 rounded bg-white shadow-sm scrollable-card" id="availableUsersContainer">
+                            @if (Model.AvailableUsers.Any())
+                            {
+                                <ul class="list-group">
+                                    @foreach (var user in Model.AvailableUsers)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox"
+                                                       name="selectedUserIds" value="@user.Id" id="user-@user.Id" />
+                                                <label class="form-check-label" for="user-@user.Id">
+                                                    @user.FullName (@user.Email)
+                                                </label>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No users found.</p>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="col-md-2 center-buttons">
+                        <button type="button" id="btnAddToTeam" class="btn btn-success btn-action shadow-sm mb-3">
+                            <i class="fas fa-arrow-right"></i> Add
+                        </button>
+                        <button type="button" id="btnRemoveFromTeam" class="btn btn-danger btn-action shadow-sm">
+                            <i class="fas fa-arrow-left"></i> Remove
+                        </button>
+                    </div>
+
+                    <!-- My Team -->
+                    <div class="col-md-5">
+                        <h5 class="text-primary">My Team</h5>
+                        <input type="text" class="form-control mb-2" id="searchMyTeam" placeholder="Search my team..." />
+                        <div class="border p-3 rounded bg-white shadow-sm scrollable-card" id="myTeamContainer">
+                            @if (Model.MyTeamMembers.Any())
+                            {
+                                <ul class="list-group">
+                                    @foreach (var member in Model.MyTeamMembers)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input me-2" type="checkbox"
+                                                       name="teamMemberIds" value="@member.Id" id="teamMember-@member.Id" />
+                                                <label class="form-check-label" for="teamMember-@member.Id">
+                                                    @member.FullName (@member.Email)
+                                                </label>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No team members yet.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Styling -->
+<style>
+    .scrollable-card {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .btn-action {
+        width: 120px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        padding: 8px 12px;
+        border-radius: 6px;
+    }
+
+    .btn-action i {
+        margin-right: 6px;
+    }
+
+    .center-buttons {
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .scrollable-card::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .scrollable-card::-webkit-scrollbar-thumb {
+        background-color: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    .scrollable-card::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .list-group-item {
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+        border-radius: 8px;
+    }
+
+    .list-group-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: scale(1.02);
+        background-color: #f9f9f9;
+    }
+
+</style>
+
+<!-- Scripts -->
+@section Scripts {
+<script>
+    document.getElementById("btnAddToTeam").addEventListener("click", function () {
+        const selectedIds = [];
+        document.querySelectorAll("input[name='selectedUserIds']:checked").forEach(cb => {
+            selectedIds.push(cb.value);
+        });
+
+        if (selectedIds.length === 0) {
+            alert("Please select at least one user.");
+            return;
+        }
+
+        fetch('/Team/AddToTeam', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify(selectedIds)
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                return response.text().then(msg => alert(msg));
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while adding users to your team.");
+        });
+    });
+
+    document.getElementById("btnRemoveFromTeam").addEventListener("click", function () {
+        const selectedIds = [];
+        document.querySelectorAll("input[name='teamMemberIds']:checked").forEach(cb => {
+            selectedIds.push(cb.value);
+        });
+
+        if (selectedIds.length === 0) {
+            alert("Please select at least one user to remove.");
+            return;
+        }
+
+        fetch('/Team/RemoveFromTeam', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify(selectedIds)
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                return response.text().then(msg => alert(msg));
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while removing users from your team.");
+        });
+    });
+
+    document.getElementById("searchAvailable").addEventListener("input", function () {
+            const filter = this.value.toLowerCase();
+            const items = document.querySelectorAll("#availableUsersContainer .user-item");
+
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(filter) ? "" : "none";
+            });
+        });
+    
+</script>
+}

@@ -1,0 +1,66 @@
+@model List<Project>
+
+@{
+    ViewData["Title"] = "Workstation";
+    var activeProjects = Model.Where(p => p.CompletionDate == null).ToList();
+    var completedProjects = Model.Where(p => p.CompletionDate != null).ToList();
+}
+
+<div class="container-fluid px-4">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h4 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-laptop-code me-2"></i>My Workstation
+            </h4>
+            <span class="badge bg-white text-primary shadow-sm">
+                <i class="fas fa-project-diagram me-1"></i> Projects: @Model.Count
+            </span>
+        </div>
+
+        <div class="card-body">
+            <ul class="nav nav-tabs mb-3" id="projectTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="active-tab" data-bs-toggle="tab" data-bs-target="#active"
+                            type="button" role="tab">Active (@activeProjects.Count)</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed"
+                            type="button" role="tab">Completed (@completedProjects.Count)</button>
+                </li>
+            </ul>
+
+            <input type="text" class="form-control mb-3" placeholder="Search Projects..." id="searchBox" />
+
+            <div class="tab-content" id="projectTabsContent">
+                <div class="tab-pane fade show active" id="active" role="tabpanel">
+                    <div class="row g-4" id="activeList">
+                        @foreach (var project in activeProjects)
+                        {
+                            @Html.Partial("_ProjectCard", project)
+                        }
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="completed" role="tabpanel">
+                    <div class="row g-4" id="completedList">
+                        @foreach (var project in completedProjects)
+                        {
+                            @Html.Partial("_ProjectCard", project)
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('searchBox').addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('#activeList .card, #completedList .card').forEach(card => {
+                const title = card.querySelector('.card-header h6').innerText.toLowerCase();
+                card.parentElement.style.display = title.includes(query) ? 'block' : 'none';
+            });
+        });
+    </script>
+}

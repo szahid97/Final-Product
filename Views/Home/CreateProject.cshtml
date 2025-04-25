@@ -1,0 +1,318 @@
+@model TaskTrackerDemo.Dtos.ProjectCreateDto
+@{
+    ViewData["Title"] = "Create Project";
+}
+
+<div class="container-fluid px-4">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex align-items-center justify-content-between">
+            <h4 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-plus-circle me-2"></i>New Project
+            </h4>
+            <select id="templateDropdown" class="form-select-sm ms-2">
+                <option selected disabled>My Template</option>
+                @if (ViewBag.TaskTemplates != null)
+                {
+                    @foreach (var template in ViewBag.TaskTemplates)
+                    {
+                        <option value="@template.Id">@template.TemplateName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="card-body">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <form asp-action="CreateProject" method="post" class="needs-validation" novalidate>
+                @Html.AntiForgeryToken()
+                
+                <!-- Project Name -->
+                <div class="form-group mb-4 row align-items-end">
+                    <div class="col-md-8 d-flex align-items-center">
+                        <label class="font-weight-bold text-primary me-2 mb-0" style="min-width: 120px;">Project Name</label>
+                        <input type="text" class="form-control form-control-sm border-primary w-50" asp-for="Name" required>
+                        <span asp-validation-for="Name" class="text-danger ms-3"></span>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center justify-content-end">
+                        <label class="font-weight-bold text-primary me-2 mb-0">Due Date</label>
+                        <input type="date" class="form-control form-control-sm border-primary w-50" asp-for="DueDate"
+                            min="@DateTime.Now.ToString("yyyy-MM-dd")">
+                        <span asp-validation-for="DueDate" class="text-danger ms-2"></span>
+                    </div>
+                </div>
+
+                <!-- Tasks Section -->
+                <div class="card border-primary mb-4">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-primary">
+                            <i class="fas fa-tasks me-2"></i>Project Tasks
+                        </h5>
+                        <button type="button" class="btn btn-sm btn-success" id="addTask">
+                            <i class="fas fa-plus me-2"></i>Add Task
+                        </button>
+                    </div>
+                    <div class="card-body" id="tasksContainer" style="max-height: 600px; overflow-y: auto;">
+                        <!-- Tasks will be added here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex gap-2 justify-content-end">
+                    <button type="button" class="btn btn-outline-info px-4" id="saveTemplateBtn">
+                        <i class="fas fa-save me-2"></i>Save Template
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fas fa-save me-2"></i>Create Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Logic for Save Template -->
+<div class="modal fade" id="templateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save Task Template</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label>Template Name</label>
+                <input type="text" id="templateName" class="form-control" placeholder="Enter a name for this template">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="confirmSaveTemplate">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+            <!-- Task Template (Outside the form) -->
+            <div id="taskTemplate" class="d-none">
+                <div class="card task-card mb-2 p-2">
+                    <div class="d-flex align-items-end gap-2">
+                        <!-- Task Description (60%) -->
+                        <div style="width: 60%;">
+                            <label class="form-label mb-1">Task <span class="task-number"></span></label>
+                            <input type="text" class="form-control" name="Tasks[INDEX].Title" placeholder="Task description" required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Tasks[INDEX].Title" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <!-- Due Date (20%) -->
+                        <div style="width: 20%;">
+                            <label class="form-label mb-1">Due Date</label>
+                            <input type="date" class="form-control" name="Tasks[INDEX].DueDate" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Tasks[INDEX].DueDate" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <!-- Assigned To (20%) -->
+                        <div style="width: 20%;">
+                            <label class="form-label mb-1">Assign To</label>
+                            <select class="form-select" name="Tasks[INDEX].AssignedToId" required>
+                                <option value="">Select Assignee</option>
+                                @foreach (var member in ViewBag.TeamMembers)
+                                {
+                                    <option value="@member.Id">@member.FullName</option>
+                                }
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Tasks[INDEX].AssignedToId" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <!-- Remove Button -->
+                        <button type="button" class="btn btn-sm btn-danger ms-2 mt-4 remove-task">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <!-- Hidden AssigneeId field -->
+                        <input type="hidden" name="Tasks[INDEX].AssigneeId" value="@ViewBag.CurrentUserId" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .task-card {
+        font-size: 0.8rem;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+    }
+
+    .task-card input,
+    .task-card select {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.5rem;
+        height: auto;
+    }
+
+    .task-card ::placeholder {
+    font-size: 0.8rem;
+    color: #aaa;
+    }
+
+    .task-card label {
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    #tasksContainer {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const taskTemplate = $('#taskTemplate').html();
+
+            // Add first task on load
+            addTask();
+
+            // Add Task on button click
+            $('#addTask').click(addTask);
+
+            function addTask() {
+                const taskCount = $('#tasksContainer .task-card').length;
+                if (taskCount >= 50) {
+                    $('#tasksContainer').css('overflow-y', 'scroll');
+                    return;
+                }
+
+                const newTaskHtml = taskTemplate.replace(/INDEX/g, taskCount);
+                const $newTask = $(newTaskHtml);
+
+                $newTask.find('.task-number').text(taskCount + 1);
+                $('#tasksContainer').append($newTask);
+            }
+
+            // Remove Task logic
+            $(document).on('click', '.remove-task', function () {
+                if ($('#tasksContainer .task-card').length > 1) {
+                    $(this).closest('.task-card').remove();
+                    resequenceTasks();
+                } else {
+                    alert("At least one task is required.");
+                }
+            });
+
+            function resequenceTasks() {
+                $('#tasksContainer .task-card').each(function (index) {
+                    const $task = $(this);
+                    $task.find('.task-number').text(index + 1);
+
+                    $task.find('[name]').each(function () {
+                        const $el = $(this);
+                        $el.attr('name', $el.attr('name').replace(/Tasks\[\d+\]/, `Tasks[${index}]`));
+                    });
+                });
+            }
+
+            // Validation Function
+            function validateTasks() {
+                let isValid = true;
+
+                $('#tasksContainer .task-card').each(function () {
+                    const title = $(this).find('input[name*=".Title"]').val().trim();
+                    const dueDate = $(this).find('input[name*=".DueDate"]').val().trim();
+                    const assignTo = $(this).find('select[name*=".AssignedToId"]').val();
+
+                    if (!title) {
+                        alert("Please enter task title.");
+                        isValid = false;
+                        return false; // break the loop
+                    }
+
+                    if (!dueDate) {
+                        alert("Please select a due date.");
+                        isValid = false;
+                        return false;
+                    }
+
+                    if (!assignTo) {
+                        alert("Please select a team member.");
+                        isValid = false;
+                        return false;
+                    }
+                });
+
+                return isValid;
+            }
+
+            // Save Template
+            $('#saveTemplateBtn').click(function () {
+                $('#templateModal').modal('show');
+            });
+
+            $('#confirmSaveTemplate').click(function () {
+                if (!validateTasks()) return;
+
+                const name = $('#templateName').val();
+                if (!name) return alert("Please enter a template name.");
+
+                const tasks = [];
+                $('#tasksContainer .task-card input[name*=".Title"]').each(function () {
+                    tasks.push($(this).val());
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Templates/Save',
+                    data: JSON.stringify({ Name: name, Tasks: tasks }),
+                    contentType: 'application/json',
+                    success: function () {
+                        alert("Template saved!");
+                        $('#templateModal').modal('hide');
+                    },
+                    error: function () {
+                        alert("Error saving template.");
+                    }
+                });
+            });
+
+            // Load Template
+            $('#templateDropdown').change(function () {
+                const templateId = $(this).val();
+
+                $.get(`/Templates/Get/${templateId}`, function (data) {
+                    console.log("Template response:", data);
+                    $('#tasksContainer').empty();
+
+                    const rawTasks = data.tasks;
+                    const tasks = Array.isArray(rawTasks)
+                        ? rawTasks
+                        : rawTasks?.$values;
+
+                    if (!Array.isArray(tasks)) {
+                        alert("Unexpected response from server. Please try again.");
+                        return;
+                    }
+
+                    tasks.forEach((task, index) => {
+                        const taskHtml = $('#taskTemplate').html().replace(/INDEX/g, index);
+                        const $task = $(taskHtml);
+                        $task.find('input[name*=".Title"]').val(task.title);
+                        $task.find('.task-number').text(index + 1);
+                        $('#tasksContainer').append($task);
+                    });
+                });
+            });
+
+            $('form').submit(function (e) {
+                if (!validateTasks()) {
+                    e.preventDefault(); // Stop form from submitting
+                }
+            });
+
+        });
+    </script>
+}
